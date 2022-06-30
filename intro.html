@@ -19,7 +19,7 @@
         <ul class="nav nav-pills">
           <li class="nav-item"><a href="index.html" class="nav-link">Resumo</a></li>
           <li class="nav-item"><a href="intro.html" class="nav-link active" aria-current="page">Introdução</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">Conceitos</a></li>
+          <li class="nav-item"><a href="concepts.html" class="nav-link">Componentes</a></li>
           <li class="nav-item"><a href="arq.html" class="nav-link">Arquitetura</a></li>
           <li class="nav-item"><a href="#" class="nav-link">Projeto de Exemplo</a></li>
           <li class="nav-item"><a href="#" class="nav-link">Conclusão</a></li>
@@ -42,7 +42,7 @@
         </div> -->
       </div>
     </div>
-  
+
     <div class="b-example-divider"></div>
       <div class="text">
         <h3 class="section-title">Definição</h3>
@@ -57,7 +57,8 @@
           <blockquote class="blockquote blockquote-custom bg-white p-5 shadow rounded">
             <!-- <div class="blockquote-custom-icon bg-info shadow-sm"><i class="fa fa-quote-left text-white"></i></div> -->
             <h4 class="">Kubernetes, K8's, Kubs...</h4>
-            <p class="mb-0 mt-2 font-italic">A palavra Kubernetes é de origem Grega e significa timoneiro ou piloto. K8s é a abreviação derivada pela troca das oito letras "ubernete" por "8", se tornado K"8"s.</p>
+            <p class="mb-0 mt-2 font-italic">A palavra Kubernetes é de origem Grega e significa timoneiro ou piloto. 
+                K8s é a abreviação derivada pela troca das oito letras "ubernete" por "8", se tornado K8's.</p>
             <!-- <footer class="blockquote-footer pt-4 mt-4 border-top">Someone famous in
                 <cite title="Source Title">Source Title</cite>
             </footer> -->
@@ -69,12 +70,12 @@
       <h3 class="section-title">Conceitos Básicos</h3>
       <p class="lead"> 
         Antes de entender mais sobre Kubernetes, é importante saber saber o que são containers
-         e sua função (em português, “contêineres”). Eles podem ser definidos como um 
+         e sua função (em português, “containeres”). Eles podem ser definidos como um 
          conjunto de um ou mais processos organizados isoladamente do sistema.
       </p>
       <p class="lead">
-        Ou seja, podemos dizer que o container nada mais é do que um ambiente isolado, 
-        disposto em um servidor e que divide um único host de controle. Para entender melhro 
+        Ou seja, podemos dizer que o <span class="mark">container nada mais é do que um ambiente isolado</span>, 
+        disposto em um servidor e que divide um único host de controle. Para entender melhor 
         esse conceito, imagine um navio  que está transportando diversos containers dentro dele. 
         Caso algum deses recipientes esteja danificado, os demais não são afetados, uma vez que são isolados, 
         protegidos e estão carregando seus próprios produtos.
@@ -96,13 +97,8 @@
       <p class="lead">
         É possível usar a orquestração em todos os ambientes em que você usa os containers. 
         Com ela, você implanta a mesma aplicação em ambientes diferentes sem precisar reprojetá-la. 
-        Sendo assim, trona-se mais fácil orquestrar serviços, incluindo armazenamento, rede e segurança.
+        Sendo assim, torna-se mais fácil orquestrar serviços, incluindo armazenamento, rede e segurança.
       </p>
-      <p class="lead">
-        Nesse sentido, cada container possui sua função e sua responsabilidade e, caso um deles sofra um dano, 
-        o funcionamento do sistema não é prejudicado, redirecionando, assim,a função afetada para um novo container.
-      </p>
-
       <p class="lead">
         Além disso, a orquestração de containers tem a finalidade de automatizar e gerenciar tarefas como, por exemplo:
       </p>
@@ -124,7 +120,7 @@
       <h3 class="section-title">Cluster</h3>
       <p class="lead"> 
         Cluster é um conjunto de máquinas de nós usado para executar aplicações em container. 
-        Ou seja, sempre que você estiver executando um orquestrador de contêineres, estará executando um cluster.
+        Ou seja, sempre que você estiver executando um orquestrador de containers, estará executando um cluster.
       </p>
       <p class="lead">
         No mínimo, um cluster contém um plano de controle e pelo menos uma máquina ou nó de computação. 
@@ -133,9 +129,9 @@
         São os nós que de fato executam as aplicações e as cargas de trabalho.
       </p>
       <p class="lead">
-        Além disso, os clusters de Kubernetes permitem que os contêineres sejam executados em várias máquinas e 
+        Além disso, os clusters de Kubernetes permitem que os containers sejam executados em várias máquinas e 
         ambientes: virtuais, físicos, com base em nuvem e locais. Ao contrário das máquinas virtuais, 
-        os contêineres de Kubernetes não estão restritos a um sistema operacional específico. 
+        os containers de Kubernetes não estão restritos a um sistema operacional específico. 
         Em vez disso, eles podem compartilhar sistemas operacionais e ser executados em qualquer lugar.
       </p>
 
@@ -143,7 +139,7 @@
         Os clusters de Kubernetes são compostos por um nó mestre e vários nós de trabalho. 
         Esses nós podem ser computadores físicos ou máquinas virtuais, dependendo do cluster. 
         O nó mestre controla o estado do cluster; por exemplo, quais aplicativos estão sendo executados 
-        e suas imagens de contêiner correspondentes. O nó mestre é a origem de todas as atribuições de tarefa. 
+        e suas imagens de container correspondentes. O nó mestre é a origem de todas as atribuições de tarefa. 
         Ele coordena processos como:
       </p>
       <ul>

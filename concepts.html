@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kubernetes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./style.css"> 
+  </head>
+  <body>
+
+    <div class="container">
+      <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+        <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+          <img src="Kubernetes-logo.png" class="logo-img">
+          <span class="fs-4">Kubernetes</span>
+        </a>
+  
+        <ul class="nav nav-pills">
+          <li class="nav-item"><a href="index.html" class="nav-link">Resumo</a></li>
+          <li class="nav-item"><a href="intro.html" class="nav-link">Introdução</a></li>
+          <li class="nav-item"><a href="concepts.html" class="nav-link active" aria-current="page">Componentes</a></li>
+          <li class="nav-item"><a href="arq.html" class="nav-link">Arquitetura</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">Projeto de Exemplo</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">Conclusão</a></li>
+        </ul>
+      </header>
+    </div>
+
+    <div class="px-4 py-5 my-5 text-center">
+      <img class="d-block mx-auto mb-4" src="" alt="" width="64" height="64">
+      <h1 class="display-5 fw-bold">Lorem ipsum</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
+          ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco 
+          laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in 
+          voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat 
+          non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+        <!-- <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+          <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Primary button</button>
+          <button type="button" class="btn btn-outline-secondary btn-lg px-4">Secondary</button>
+        </div> -->
+      </div>
+    </div>
+  
+    <div class="b-example-divider"></div>
+      <div class="text">
+        <h3 class="section-title">Pods</h3>
+        <p class="lead"> 
+            Um Pod é a menor unidade de execução no Kubernetes que um usuário Pode interagir e configurar. 
+            Ele encapsula uma ou mais aplicações e são efêmeros por natureza. Isto é, se um Pod (ou o nó em que ele é executado) falhar,
+            o Kubernetes Pode criar automaticamente uma nova réplica desse Pod para continuar as operações. É frequente que, na 
+            verdade, o Kubernetes criei réplicas de Pods antes mesmo de uma falha ocorrer.
+        </p> 
+        <img src="./cluster-schema.jpeg" class="mx-auto d-block border my-3 "widht="500" height="300"> 
+
+        <p class="lead"> 
+            Com base na imagem, Podemos começar a compreender o Poder de fogo do Kubernetes nas lentes de uma das suas principais vantagens: 
+            A escalabilidade. 
+        </p>
+        <p class="lead"> 
+            Mas o quê exatamente fazem os Pods? Os Pods representam os processos em execução em um cluster. 
+            Ao limitar os Pods a um único processo, o Kubernetes Pode relatar a integridade de cada processo em execução no cluster.
+            Vejamos os componentes de um Pod: 
+        </p>
+        <ul>
+            <li class="lead">Um endereço IP único, que permite a comunicação entre Pods;</li>
+            <li class="lead">Volumes de armazenamento persistentes;</li>
+            <li class="lead">Informações de configurção que determinam como um container deve rodar;</li>
+        </ul>
+        <p class="lead">
+            Embora a maioria dos Pods contenha um único contêiner,
+            muitos terão alguns contêineres que trabalham juntos para executar uma função desejada.
+        </p>
+        <p class="lead">
+            Quais são as vantagens de um Pod? Quando os Pods contêm vários contêineres, as comunicações e o c
+            ompartilhamento de dados entre eles são simplificados. Isso acontece pois todos os contêineres 
+            em um Pod compartilham o mesmo namespace de rede, portanto eles Podem localizar uns aos outros 
+            e se comunicar via localhost. Sendo assim, os Pods Podem se comunicar entre si usando o endereço 
+            IP de outro Pod ou fazendo referência a um recurso que reside em outro Pod.
+
+        </p>
+        <p class="lead">
+            Outra vantagem é que os Pods Podem incluir contêineres que são executados quando o Pod é iniciado, 
+            por exemplo, para executar uma inicialização necessária antes da execução dos contêineres do aplicativo. 
+            Além disso, como mencionado anteriormente os Pods simplificam a escalabilidade, permitindo que os Pods 
+            replicados sejam criados e desligados automaticamente com base nas alterações das configurações de demanda.
+        </p>
+      
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+  </body>
+</html>
