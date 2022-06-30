@@ -35,8 +35,8 @@
             Kubernetes é frequentemente considerado uma tecnologia complicada e com uma longa linha de aprendizagem. E 
             a sua arquitetura é um dos principais motivos para tais considerações. Isso pois, além de possuir diferentes
             componentes, cada qual com funcionalidades nem sempre triviais, estes componentes trabalham em conjunto, em 
-            rotinas não amigáveis à iniciantes. Um cluster Kubernetes é semelhante a uma orquestra musical (o nome 
-            "orquestrador não é sem propósito"): Cada integrante tem seu papel individual, que Pode ser analisado 
+            rotinas não amigáveis à iniciantes. Dessa maneira, um cluster Kubernetes é semelhante a uma orquestra musical (o nome 
+            "orquestrador" não é sem propósito): Cada integrante tem seu papel individual, que pode ser analisado 
             e estudado por si só, mas que faz muito mais sentido quando observado ao lado dos outros membros 
             da orquestra. E claro, toda orquestra tem um maestro, que sabe o que esperar de cada integrante 
             e quais comandos dar a eles. Nesta seção, destrincharemos essa arquitetura (ou orquestra), com o objetivo 
@@ -60,33 +60,41 @@
           pela qual o cluster é responsável. Para entender melhor seu funcionamento, detalharemos a seguir os principais
           processos que compõem um worker node. 
         </p> 
+
+        <h5 class="subsection-title">Containers Runtime</h5>
         <p class="lead"> 
             Todo worker node deve possuir um container runtime, como Docker, por exemplo. Isto é esperado já que, como citado,
             o objetivo de um node é cuidar dos Pods, que por sua vez possuem os containers. 
         </p>
+        <h5 class="subsection-title">Kubelet</h5>
         <p class="lead"> 
-            Kubelet é outro processo presente em todo node, considerado o mais importante. O objetivo desse agente é 
+            Kubelet é outro processo de suma importância, presente em todo node. O objetivo desse agente é 
             garantir que os containers de cada Pod estão rodando como esperado. Para isso, o Kubelet toma como
             base PodSpecs (objetos YAML ou JSON que descrevem um Pod) e garante que os 
             containers descritos neles estão rodando como esperado. Cabe também ao Kubelet a tarefa de inicializar 
             um Pod, definindo a quantidade de recursos da máquina que deve ser reservada a ele, como memória e CPU. 
         </p>
+        <h5 class="subsection-title">Kube-Proxy</h5>
         <p class="lead">
             Um cluster geralmente possui vários worker nodes, cada um contendo diferentes Pods (ou réplicas de mesmos Pods),
-            e que precisam se comunicar entre si. Essa comunicação se dá através de um proxy, chamado de kube-proxy. 
-            Antes de explicar o Kube-Proxy, vejamos como seria a comunicação entre cliente e Pod caso o Kube-Proxy não existisse:
+            e que precisam se comunicar entre si. Essa comunicação se dá através de um proxy, chamado de Kube-Proxy. 
+            Antes de explicá-lo, vejamos como seria a comunicação entre Pods caso ele não existisse:
         </p>
         <img src="./no-proxy.jpeg" class="mx-auto d-block border my-3 "widht="500" height="300"> 
         <p class="lead">
-            Se o Kube-Proxy não existisse e uma aplicação cliente precisasse se conectar à um servidor de Pods em um cluster, ele precisaria
-            usar o IP dos Pods para se conectar a eles na rede. Ou seja, o cliente precisaria formar e manter a lista de endereços de cada Pod,
-            o que é um peso desnecessário para ser delegado ao cliente. Além disso, como vimos anteriormente os Pods são efêmeros, então é esperado
-            que eles apareçam e sumam constantemente devido à atualizações na escalabilidade ou falhas de hardware. 
-            Com isso, é fácil perceber que teríamos um problema com essa lista de endereços.
+            Sem Kube-Proxy, um Pod cliente (que faz uma requisição) precisaria conhecer o endereço de IP 
+            do Pod servidor (que recebe uma requisição) que desejasse se conectar. Ou seja, cada Pod precisaria formar e manter 
+            uma lista de endereços de todos os outros Pods. Isso por si só já é uma carga de trabalho desnecessária para um Pod,
+            mas tudo fica ainda mais complicado quando lembramos de seu tempo de vida. Como descrito na seção <a href="./concepts.html">Componentes</a>,
+            os Pods são efêmeros. Portanto, espera-se eles sejam criados e destruídos constantemente - frequentemente devido à atualizações na 
+            escalabilidade, falhas em hardware e software. Seguindo esse modelo, toda vez que um Pod fosse substituído deveria haver um procedimento de 
+            informar a todos os outros Pods o novo endereço de IP. Evidentemente, isso seria computacionalmente custoso.
         </p>
         <p class="lead">
-            O Kube-Proxy implementa um serviço que provê um IP estável: Um controlador observa os Pods que estão 
-            associados com o serviço para adicioná-los e removê-los do seu banco de dados quando necessário. 
+            Mas esse não é o cenário real em um cluster Kubernetes.  
+            O Kube-Proxy implementa um serviço que provê comunicação estável: Um controlador observa os Pods que estão 
+            associados com determinado serviço
+             para adicioná-los e removê-los do seu banco de dados quando necessário. 
             Agora, o cliente só precisa do endereço do serviço, e o resto não é sua responsabilidade.
         </p>
         <img src="./with-proxy.jpeg" class="mx-auto d-block border my-3 "widht="500" height="300"> 
@@ -102,6 +110,6 @@
 </html>
 
 
-            <!-- A tarefa do kube-proxy é criar as regras de acesso de rede para cada um dos serviços de Pod presentes no 
-            node. Por exemplo, se um Pod A deseja se comunicar com um Pod B, é o kube-proxy o responsável por direcionar
+            <!-- A tarefa do Kube-Proxy é criar as regras de acesso de rede para cada um dos serviços de Pod presentes no 
+            node. Por exemplo, se um Pod A deseja se comunicar com um Pod B, é o Kube-Proxy o responsável por direcionar
             essa comunicação. Tal direcionamento se dá através do  -->

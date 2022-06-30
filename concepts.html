@@ -28,8 +28,8 @@
     </div>
 
     <div class="px-4 py-5 my-5 text-center">
-      <img class="d-block mx-auto mb-4" src="" alt="" width="64" height="64">
-      <h1 class="display-5 fw-bold">Lorem ipsum</h1>
+      <img class="d-block mx-auto mb-4" src="./gear.png" alt="" width="64" height="64">
+      <h1 class="display-5 fw-bold"></h1>
       <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
@@ -49,20 +49,21 @@
       <div class="text">
         <h3 class="section-title">Pods</h3>
         <p class="lead"> 
-            Um Pod é a menor unidade de execução no Kubernetes que um usuário Pode interagir e configurar. 
-            Ele encapsula uma ou mais aplicações e são efêmeros por natureza. Isto é, se um Pod (ou o nó em que ele é executado) falhar,
-            o Kubernetes Pode criar automaticamente uma nova réplica desse Pod para continuar as operações. É frequente que, na 
-            verdade, o Kubernetes criei réplicas de Pods antes mesmo de uma falha ocorrer.
+            Um Pod é a menor unidade de execução no Kubernetes que um usuário pode interagir e configurar. 
+            Ele encapsula uma ou mais aplicações e são efêmeros por natureza. Isto é, se um Pod (ou o node em que ele é executado) falhar,
+            o Kubernetes pode criar automaticamente uma nova réplica desse Pod para continuar as operações. É frequente que, na 
+            verdade, o Kubernetes criei réplicas de Pods antes mesmo de uma falha ocorrer. Todavia, essas réplicas possuirão um 
+            endereço de IP diferente do Pod que deixou de existir. 
         </p> 
         <img src="./cluster-schema.jpeg" class="mx-auto d-block border my-3 "widht="500" height="300"> 
 
         <p class="lead"> 
-            Com base na imagem, Podemos começar a compreender o Poder de fogo do Kubernetes nas lentes de uma das suas principais vantagens: 
+            Com base na imagem, podemos começar a compreender o poder de fogo do Kubernetes nas lentes de uma das suas principais vantagens: 
             A escalabilidade. 
         </p>
         <p class="lead"> 
             Mas o quê exatamente fazem os Pods? Os Pods representam os processos em execução em um cluster. 
-            Ao limitar os Pods a um único processo, o Kubernetes Pode relatar a integridade de cada processo em execução no cluster.
+            Ao limitar os Pods a um único processo, o Kubernetes pode relatar a integridade de cada processo em execução.
             Vejamos os componentes de um Pod: 
         </p>
         <ul>
@@ -71,25 +72,42 @@
             <li class="lead">Informações de configurção que determinam como um container deve rodar;</li>
         </ul>
         <p class="lead">
-            Embora a maioria dos Pods contenha um único contêiner,
-            muitos terão alguns contêineres que trabalham juntos para executar uma função desejada.
-        </p>
-        <p class="lead">
-            Quais são as vantagens de um Pod? Quando os Pods contêm vários contêineres, as comunicações e o c
-            ompartilhamento de dados entre eles são simplificados. Isso acontece pois todos os contêineres 
-            em um Pod compartilham o mesmo namespace de rede, portanto eles Podem localizar uns aos outros 
-            e se comunicar via localhost. Sendo assim, os Pods Podem se comunicar entre si usando o endereço 
-            IP de outro Pod ou fazendo referência a um recurso que reside em outro Pod.
-
-        </p>
-        <p class="lead">
-            Outra vantagem é que os Pods Podem incluir contêineres que são executados quando o Pod é iniciado, 
-            por exemplo, para executar uma inicialização necessária antes da execução dos contêineres do aplicativo. 
-            Além disso, como mencionado anteriormente os Pods simplificam a escalabilidade, permitindo que os Pods 
-            replicados sejam criados e desligados automaticamente com base nas alterações das configurações de demanda.
-        </p>
-      
+            Embora a maioria dos Pods contenha um único container, é possível haver mais de um. Nesses casos, os
+            múltiplos containers trabalham juntos para executar uma função desejada. Nesse cenário, é possível que ocorra 
+            comunicação interna entre os containers de um mesmo Pod, que acaba sendo simplificada perante a comuniação entre "inter-pod". 
+            Isso acontece pois containers de um mesmo Pod compartilham um namespace de rede, portanto eles podem localizar uns 
+            aos outros e se comunicar via localhost. 
+        </p>      
     </div>
+
+    <div class="b-example-divider"></div>
+    <div class="text">
+      <h3 class="section-title">Services</h3>
+      <p class="lead">
+        No tópico anterior, mencionamos que containers que compartilham um mesmo Pod podem se comunicar com facilidade. 
+        Mas e como ocorre a comunicação entre containers de diferentes Pods? Em um cluster Kubernetes, essa comunicação 
+        se dá através de uma rede de Pods. Imagine o cenário em que um Pod A, que roda por exemplo uma aplicação web, 
+        deseja se comunicar com um Pod B, que poderia rodar um banco de dados. O Pod A poderia conectar-se diretamente 
+        a outro, utilizando seu IP. Essa abordagem, no entanto, não é interessante devido a êfemeridade dos Pods, que 
+        mudam de IP frequentemente. 
+      </p>
+      <p class="lead">
+        Em vez disso, services são utilizados para expor Pods ao cluster, em uma relação de um para um. 
+        Services possuem endereço de IP permanente, e apesar de estarem associados a um Pod, seu ciclo de vida não está
+        - ou seja, um service permanece quando seu Pod morre; e eventualmente será associado ao Pod subtituto.
+        No exemplo que 
+        supomos acima, criaríamos um service - <code>db_service</code>, por exemplo. Então, o Pod A se comunicaria
+        diretamente com <code>db_service</code>, e sua requisição seria redirecionada ao Pod B (mais sobre esse 
+        direcionamento na página de <a href="./arq.html">Arquitetura</a>). 
+      </p>
+      <p class="lead">
+        Mas e se um problema no Pod B resultasse na sua substituição pelo Pod B1, uma réplica de B. 
+        Nesse caso, nada mudaria na visão do Pod A, que continuaria fazendo requisições ao <code>db_service</code>.
+        Porém, e se após realizar a requisição, o Pod A fosse, devido a uma falha, substituído pelo Pod A1? A solução é a 
+        mesma: o Pod que contém o banco de dados também não se comunica diretamente com o Pod que contém a aplicação 
+        web, mas como seu respectivo service. Portanto, podemos concluir que durante uma comunicação, cada Pod é agnóstico
+        com relação ao Pod com o qual está conectando - a única coisa que interessa é o service desejado. 
+      </p>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
   </body>
 </html>
