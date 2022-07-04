@@ -29,14 +29,12 @@
 
     <div class="px-4 py-5 my-5 text-center">
       <img class="d-block mx-auto mb-4" src="./gear.png" alt="" width="64" height="64">
-      <h1 class="display-5 fw-bold"></h1>
+      <h1 class="display-5 fw-bold">As engrenagens do Kubernetes</h1>
       <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
-          ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco 
-          laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in 
-          voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat 
-          non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          Nesta seção vamos explorar os componentes que são a base do Kubernetes. Veremos o que são Pods,
+          como eles se comunicam entre si e como usuários externos se comunicam com Pods. Veremos também 
+          outras peças fundamentais, como ConfigMaps e Volumes.
         </p>
         <!-- <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
           <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Primary button</button>
@@ -49,7 +47,8 @@
       <div class="text">
         <h3 class="section-title">Pods</h3>
         <p class="lead"> 
-            Um Pod é a menor unidade de execução no Kubernetes que um usuário pode interagir e configurar. 
+            Um Pod é a menor unidade de execução no Kubernetes que um usuário pode interagir e configurar, e se localizam dentro de um Node
+            (mais sobre isso em <a href="arq.html">Arquitetura</a>).
             Ele encapsula uma ou mais aplicações e são efêmeros por natureza. Isto é, se um Pod (ou o node em que ele é executado) falhar,
             o Kubernetes pode criar automaticamente uma nova réplica desse Pod para continuar as operações. É frequente que, na 
             verdade, o Kubernetes criei réplicas de Pods antes mesmo de uma falha ocorrer. Todavia, essas réplicas possuirão um 
@@ -59,7 +58,8 @@
 
         <p class="lead"> 
             Com base na imagem, podemos começar a compreender o poder de fogo do Kubernetes nas lentes de uma das suas principais vantagens: 
-            A escalabilidade. 
+            A escalabilidade. Se o número de usuários acessando uma aplicação crescer, pode-se criar novas réplicas do Pod que a contém, no 
+            mesmo Node.
         </p>
         <p class="lead"> 
             Mas o quê exatamente fazem os Pods? Os Pods representam os processos em execução em um cluster. 
@@ -72,9 +72,10 @@
             <li class="lead">Informações de configurção que determinam como um container deve rodar;</li>
         </ul>
         <p class="lead">
-            Embora a maioria dos Pods contenha um único container, é possível haver mais de um. Nesses casos, os
-            múltiplos containers trabalham juntos para executar uma função desejada. Nesse cenário, é possível que ocorra 
-            comunicação interna entre os containers de um mesmo Pod, que acaba sendo simplificada perante a comuniação entre "inter-pod". 
+            Embora a maioria dos Pods contenha um único container (o que é recomendado), é possível haver mais de um. No entanto, nunca 
+            se criam containers idênticos dentro de um mesmo Pod, com a intenção de escalar a aplicação. O que costuma acontecer é que
+            múltiplos containers trabalham juntos para executar uma função desejada. Ou seja,  Nesse cenário, é possível que ocorra 
+            comunicação interna entre os containers de um mesmo Pod, que acaba sendo mais simples perante a comunicação entre "inter-pod". 
             Isso acontece pois containers de um mesmo Pod compartilham um namespace de rede, portanto eles podem localizar uns 
             aos outros e se comunicar via localhost. 
         </p>      
@@ -82,7 +83,7 @@
 
     <div class="b-example-divider"></div>
     <div class="text">
-      <h3 class="section-title">Services</h3>
+      <h3 class="section-title">Services: comunicação interna</h3>
       <p class="lead">
         No tópico anterior, mencionamos que containers que compartilham um mesmo Pod podem se comunicar com facilidade. 
         Mas e como ocorre a comunicação entre containers de diferentes Pods? Em um cluster Kubernetes, essa comunicação 
@@ -92,14 +93,17 @@
         mudam de IP frequentemente. 
       </p>
       <p class="lead">
-        Em vez disso, services são utilizados para expor Pods ao cluster, em uma relação de um para um. 
-        Services possuem endereço de IP permanente, e apesar de estarem associados a um Pod, seu ciclo de vida não está
-        - ou seja, um service permanece quando seu Pod morre; e eventualmente será associado ao Pod subtituto.
+        Em vez disso, services são utilizados para expor Pods ao cluster. 
+        Services possuem endereço de IP permanente, e apesar de estarem associados a um ou mais Pods, seu ciclo de vida não está
+        - ou seja, um service permanece quando seu Pod morre. Na realidade, <span class="mark">services estão associados a uma aplicação</span>. 
+        Já mencionamos que por motivos diversos, principalmente escalabidade, um Node pode conter réplicas de um mesmo Pod. Nesse caso, o service 
+        tem conhecimento de todos os Pods associados a ele. Mas quando uma requisição é feita, apenas um dos Pods recebe-a. 
         No exemplo que 
         supomos acima, criaríamos um service - <code>db_service</code>, por exemplo. Então, o Pod A se comunicaria
         diretamente com <code>db_service</code>, e sua requisição seria redirecionada ao Pod B (mais sobre esse 
         direcionamento na página de <a href="./arq.html">Arquitetura</a>). 
       </p>
+      <img src="./service-example.png" class="mx-auto d-block border my-3 "widht="300" height="500"> 
       <p class="lead">
         Mas e se um problema no Pod B resultasse na sua substituição pelo Pod B1, uma réplica de B. 
         Nesse caso, nada mudaria na visão do Pod A, que continuaria fazendo requisições ao <code>db_service</code>.
@@ -108,6 +112,83 @@
         web, mas como seu respectivo service. Portanto, podemos concluir que durante uma comunicação, cada Pod é agnóstico
         com relação ao Pod com o qual está conectando - a única coisa que interessa é o service desejado. 
       </p>
+      <p class="lead">
+        A descrição de service dada acima diz respeito a um tipo específico de services, conhecido como ClusterIP. Esse é o
+        tipo recomendado para comunicação interna no Cluster. Mas services também são utilizados para comunicação externa, 
+        isto é, um usuário acessando a aplicação através do seu browser. Trataremos disso no próximo tópico.
+      </p>
+    </div>
+
+    <div class="b-example-divider"></div>
+    <div class="text">
+      <h3 class="section-title">Services: comunicação externa</h3>
+      <p class="lead">
+        Services também são os componentes responsáveis por lidar com a comunicação externa direcionada ao Cluster. Arquiteturalmente, 
+        isso faz sentido, <span class="mark">já que do ponto de vista de protocolos não há diferença entre uma requisição feita de um pod a outro, de uma 
+          feita de um browser a um Pod.</span>  Trataremos a seguir do componente mais recomendado para conexão externa, Ingress; em seguida,
+        mencionaremos as principais diferenças entre ele e outros tipos de services, que são menos recomendados.
+      </p>
+      <h5 class="subsection-title">Ingress</h5>
+      <p class="lead">
+        Ingress é um objeto API que provê regras de roteamento para administrar o acesso de usuários externos através de HTTP.
+        Com Ingress, é possível definir facilmente regras para roteamento de tráfego, sem a necessidade de criar Load Balancers ou 
+        expor cada service de um Node. Por essas razões, Ingress é a opção mais recomendada para ambientes de produção - onde 
+        comumente roteamento baseado em conteúdo, suporte para múltiplos protocolos e autenticação são necessários.
+        Um componente Ingress provê:
+      </p>
+      <ul>
+        <li class="lead">URL's acessáveis externamente para as aplicações do Cluster</li>   
+        <li class="lead">Regras de tráfego e balanceamento de carga (load balancing)</li>
+        <li class="lead">Suporte à SSL</li>
+      </ul>
+
+      <p class="lead">
+        Como mencionado, o Ingress é um objeto API que descreve como os services devem ser expostos para fora do Cluster Kubernetes.
+        O Ingress também possui outro subcomponente controlador, o Ingress Controller, que é a implementação real da API. O controller 
+        roda ao lado dos Pods em um Cluster e é responsável por ler e processar as informações. 
+      </p>
+      <img src="./ingress.png" class="mx-auto d-block border my-3 "widht="300" height="500"> 
+      <h5 class="subsection-title">Comparação entre gerenciadores de comunicação externa</h5>
+      <p class="lead">
+        Uma possibilidade básica para lidar com comunicação externa é o NodePort. Esse tipo de service cria uma porta específica em todos os 
+        Nodes e encaminha qualquer tráfego direcionado a esta porta ao service desejado. Ou seja, a conexão acontece através do endereço de 
+        IP do node e uma porta. Ainda não tratamos dos Nodes, mas saiba que eles também são efêmeros. Sendo assim, é evidente que não é 
+        recomendado utilizar seu endereço de IP para acessar externamente uma aplicação.
+      </p>
+      <p class="lead">
+        Mencionamos na seção anterior que o tipo de service mais utilizado para comunicação interna dentro de um Cluster é o ClusterIP.
+        Essa opção agrupa Pods semelhantes (por exemplo, Pods com aplicações front end) e os associa a um endereço de IP imutável.
+        Essa opção, no entanto, não é recomendada para acesso externo pois não possui ferramentas importantes como controle de tráfego.
+      </p>
+      <p class="lead">
+        Também é possível utilizar um balanceador de carga externo, que pode oferecer vantagens e desvantagens perante o Ingress. Porém, 
+        por se tratar de um componente nativo do Kubernetes, recomenda-se seu uso. 
+      </p>
+    </div>
+
+    <div class="b-example-divider"></div>
+    <div class="text">
+      <h3 class="section-title">ConfigMap e Secret</h3>
+      <p class="lead">
+        Um ConfigMap é um objeto API utilizado para armazenar dados não confidenciais, no formato chave-valor. Pods são capazes de consumir 
+        ConfigMaps como variáveis de ambientes. O principal objetivo do ConfigMap é permitir a separação de configurações de ambiente das 
+        imagens de container, contribuindo para portabilidade da aplicação. Por exemplo, com ConfigMaps é possível transitar entre o ambiente
+        de testes e de produção sem alterações nas imagens dos containers. Também evitam que a aplicação precise ser rebuildada para a simples
+        mudança de um endpoint, por exemplo. 
+      </p>
+      <p class="lead">
+        Um Secret é um objeto que contém uma pequena quantidade de dados sensíveis necessários para o funcionamento da aplicação, como senhas,
+        credenciais, tokens, etc. Semelhante a um ConfigMap, um Secret também tem como principal objetivo evitar que esses dados sejam colocados 
+        na imagem da aplicação. A diferença é que, enquanto ConfigMaps são arquivos de texto simples, Secrets são codificados em base64. 
+      </p>
+    </div>
+    <div class="b-example-divider"></div>
+    <div class="text">
+      <h3 class="section-title">Volumes</h3>
+      <p class="lead">
+      </p>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
   </body>
 </html>
