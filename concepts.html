@@ -186,9 +186,37 @@
     <div class="text">
       <h3 class="section-title">Volumes</h3>
       <p class="lead">
+        Ao longo das seções, vimos que um dos principais lemas do Kubernetes é o fácil descarte de Pods quando necessário. 
+        O mesmo vale para containers: é frequente que containers sejam apagados e substituiídos ou reiniciados dentro de um Pod.
+        E quando isso acontece, o novo container continua usando os mesmos recursos usados por seu antecessor - a mesma memória 
+        RAM, CPU, interfaces de rede, entre outros. Entretanto, isso não acontece para arquivos armazenados em disco em um container:
+        se um container é reiniciado (ou seu Pod), todos os arquivos são perdidos. Diante desse problema, o Kubernetes disponibiliza os Volumes.
+      </p>
+      <p class="lead">
+        Existem muitos tipos diferentes de Volumes suportados pelo Kubernetes, cada um com suas próprias características, vantagens e desvantagens.
+        Não faz muito sentido abordarmos cada um dos tipos, já que o objetivo deste trabalho é apresentar uma visão panorâmica do Kubernetes. O 
+        importante é entender o problema que os Volumes tentam solucionar: a efêmeridade de arquivos em disco em imagens de containers. Alguns Volumes 
+        são associados a um Pod, tendo seu ciclo de vida associado a ele. Outros, são relacionados com o próprio Cluster e não dependem de um único Pod. 
+        Existem até mesmo Volumes externos ao Cluster, que sobrevivem a uma completa falha. Em um projeto grande, é interessante ter diversos tipos de 
+        Volumes disponíveis, que atendam às mais diversas necessidades. 
       </p>
     </div>
 
+    <div class="b-example-divider"></div>
+    <div class="text">
+      <h3 class="section-title">Deployment e StatefulSet</h3>
+      <p class="lead">
+        Mencionamos que é comum existirem réplicas de Pods, seja pela escalabidade da aplicação ou por redundância. Mas no que o Kubernetes se 
+        baseia para criar essas réplicas? Arquivos conhecidos como Deployments funcionam como plantas-baixas para a criação de Pods. Cada Pod 
+        tem um Deployment associado, que especifica as configurações que ele deve ter, assim como a quantidade de réplicas que devem ser criadas. 
+        É normalmente através desse componente que um administrador do Cluster interage para controlar Pods. 
+      </p>
+      <p class="lead">
+        Deployments, no entanto, são usados apenas em aplicações sem estado. Um Pod cuja aplicação é um banco de dados é replicado e configurado 
+        através de outro componente, o StatefulSet. Uma outra função atribuída ao StatefulSet é a de garantir a integridade e sincronia nos dados
+        de um banco de dados que é replicado em mais de um Pod. 
+      </p>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
   </body>
 </html>
