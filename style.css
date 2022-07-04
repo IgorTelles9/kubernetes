@@ -20,7 +20,7 @@ body {
   margin-bottom: 0.7rem;
 }
 
-p,ul,small{
+p,ul,small, .small{
     font-family: 'Times New Roman', Times, serif;
     text-align: justify;
 }

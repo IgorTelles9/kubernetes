@@ -11,7 +11,7 @@
 
     <div class="container">
       <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-        <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+        <a href="./index.html" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
           <img src="Kubernetes-logo.png" class="logo-img">
           <span class="fs-4">Kubernetes</span>
         </a>
@@ -21,8 +21,8 @@
           <li class="nav-item"><a href="intro.html" class="nav-link">Introdução</a></li>
           <li class="nav-item"><a href="concepts.html" class="nav-link">Componentes</a></li>
           <li class="nav-item"><a href="arq.html" class="nav-link active" aria-current="page">Arquitetura</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">Projeto de Exemplo</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">Conclusão</a></li>
+          <li class="nav-item"><a href="./conclusion.html" class="nav-link">Conclusão</a></li>
+          <li class="nav-item"><a href="./bibliography.html" class="nav-link">Bibliografia</a></li>
         </ul>
       </header>
     </div>
@@ -39,7 +39,7 @@
             "orquestrador" não é sem propósito): Cada integrante tem seu papel individual, que pode ser analisado 
             e estudado por si só, mas que faz muito mais sentido quando observado ao lado dos outros membros 
             da orquestra. E claro, toda orquestra tem um maestro, que sabe o que esperar de cada integrante 
-            e quais comandos dar a eles. Nesta seção, destrincharemos essa arquitetura (ou orquestra), com o objetivo 
+            e quais comandos dar a eles. Nesta seção, destrincharemos essa arquitetura, com o objetivo 
             de torna-lá mais simples.
         </p>
         <!-- <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
@@ -48,7 +48,47 @@
         </div> -->
       </div>
     </div>
-  
+
+    <div class="b-example-divider"></div>
+      <div class="text">
+        <h3 class="section-title">Master Node</h3>
+        <p class="lead"> 
+          Também conhecido como Master Server, o Master Node é o responsável pela administração e controle do Cluster Kubernetes. Ele 
+          realiza tal função através do armazenamento de informações de diferentes Worker Nodes, planejando onde cada container será   
+          criado e os monitorando. Há quatro processos principais que compõem o Master Node e que possibilitam o gerenciamento do 
+          estado do Cluster , cada um com sua esfera de influência e funcionalidades. Abordaremos cada um deles a seguir. 
+        </p> 
+        <h5 class="subsection-title">Etcd</h5>
+        <p class="lead">
+          Etcd é um armazenamento distribúido, no formato chave-valor, que é consistente, simples, seguro e rápido. É usado para 
+          guardar e gerenciar informações críticas que sistemas distribuídos (como um Cluster Kubernetes) necessitam para funcionar. 
+          No Kubernetes, o Etcd guarda informações referentes aos Nodes, Pods, ConfigMaps, Secrets, entre outros. Toda e qualquer mudança 
+          feita no Cluster - seja a adição de novos Nodes, novos Pods, novos services, etc - é incluída e atualizada no Etcd. 
+        </p>
+        <h5 class="subsection-title">Kube API Server</h5>
+        <p class="lead">
+          O Kube API Server é o ponto de entrada (<em>entry point</em>) para todos os comandos REST usados no gerenciamento do Cluster.
+          Esse componente é muitas vezes visto como um painel de controle do Kubernetes, justamente por permitir ao usuário interagir 
+          com o Master Node. Além disso, o API Server é o único componente que interage diretamente com o Etcd. E, já que tudo que acontece no Cluster
+          acaba sendo registrado no Etcd, podemos dizer que todos os componentes devem se comunicar com o API Server. 
+        </p>
+        <h5 class="subsection-title">Kube Scheduler</h5>
+        <p class="lead">
+          A responsabilidade do Kube Scheduler está em decidir quais Pods estarão em quais Nodes, seguindo critérios específicos.
+          Por exemplo, alguns Pods necessitam de determinados recursos (como mais memória RAM) que podem estar disponíveis apenas 
+          em Nodes específicos. As regras de como essa decisão é feita podem ser definidas pelo administrador do Cluster Kubernetes. 
+          Após decidir qual Node deverá receber determinado Pod, o Kube Scheduler informa ao Kube API Server,
+          que por sua vez atualiza determinados dados no Etcd. 
+        </p>
+
+        <h5 class="subsection-title">Kube Controller Manager</h5>
+        <p class="lead">
+          Esse componente é responsável por monitorar e detectar mudanças no estado do Cluster. Por exemplo, é o Kube Controller Manager que observa
+          os Worker Nodes e seus respectivos Pods, atento à possíveis falhas. Se algum problema ocorrer, o Controller Manager deverá informar
+          ao API Server, que tomará as medidas necessárias para que o Cluster retorne ao seu estado ideal. 
+        </p>
+    </div>
+
     <div class="b-example-divider"></div>
       <div class="text">
         <h3 class="section-title">Worker Node</h3>
@@ -76,35 +116,43 @@
         </p>
         <h5 class="subsection-title">Kube-Proxy</h5>
         <p class="lead">
-            Um cluster geralmente possui vários worker nodes, cada um contendo diferentes Pods (ou réplicas de mesmos Pods),
-            e que precisam se comunicar entre si. Essa comunicação se dá através de um proxy, chamado de Kube-Proxy. 
-            Antes de explicá-lo, vejamos como seria a comunicação entre Pods caso ele não existisse:
-        </p>
-        <img src="./no-proxy.jpeg" class="mx-auto d-block border my-3 "widht="500" height="300"> 
+            Na página de <a href="./concepts.html">Componentes</a>, descrevemos o funcionamento dos Services Kubernetes. 
+            Talvez pela leitura daquela seção, o leitor tenha tido a errônea compreensão de que os Services são responsáveis
+            por fazer o encaminhamento das requisições. Na realidade, services não fazem parte da rede de Pods, porque eles 
+            não existem de verdade. Tratam-se de uma abstração, que existem somente na memória do Kubernetes. Mas então 
+            como eles são acessíveis por todo Cluster e como ocorre o encaminhamento de requisições? Isso é responsabilidade 
+            do Kube-Proxy. 
+          </p>
         <p class="lead">
-            Sem Kube-Proxy, um Pod cliente (que faz uma requisição) precisaria conhecer o endereço de IP 
-            do Pod servidor (que recebe uma requisição) que desejasse se conectar. Ou seja, cada Pod precisaria formar e manter 
-            uma lista de endereços de todos os outros Pods. Isso por si só já é uma carga de trabalho desnecessária para um Pod,
-            mas tudo fica ainda mais complicado quando lembramos de seu tempo de vida. Como descrito na seção <a href="./concepts.html">Componentes</a>,
-            os Pods são efêmeros. Portanto, espera-se eles sejam criados e destruídos constantemente - frequentemente devido à atualizações na 
-            escalabilidade, falhas em hardware e software. Seguindo esse modelo, toda vez que um Pod fosse substituído deveria haver um procedimento de 
-            informar a todos os outros Pods o novo endereço de IP. Evidentemente, isso seria computacionalmente custoso.
-        </p>
-        <p class="lead">
-            Mas esse não é o cenário real em um cluster Kubernetes.  
-            O Kube-Proxy implementa um serviço que provê comunicação estável: Um controlador observa os Pods que estão 
-            associados com determinado serviço
-             para adicioná-los e removê-los do seu banco de dados quando necessário. 
-            Agora, o cliente só precisa do endereço do serviço, e o resto não é sua responsabilidade.
-        </p>
-        <img src="./with-proxy.jpeg" class="mx-auto d-block border my-3 "widht="500" height="300"> 
-        <p class="lead">
-            Em suma, o Kube-proxy é um proxy de rede que é executado em cada nó de seu cluster, 
-            implementando parte do conceito de serviço do Kubernetes. 
-            O Kube-proxy mantém regras de rede nos nós, que permitem a comunicação de rede com seus Pods a partir de 
-            sessões de rede dentro ou fora do cluster.
+          O Kube-Proxy é responsável por identificar um novo Service e criar as regras de acesso a partir de seu Node. 
+          Essas regras definirão como um Pod fará requisições ao(s) Pod associado(s) com o Service. A maneira como o
+          Kube-Proxy cria essas regras é utilizando tabelas de IP, que associarão o IP estável do Service a um IP 
+          instável de um Pod pertencente a ele. O Proxy encaminha 
+          O Kube-Proxy pode usar os protocolos TCP, UDP e SCTP para realizar tais comunicações entre Pods. 
         </p>
     </div>
+    
+    <div class="b-example-divider"></div>
+    <div class="text">
+      <h3 class="section-title">Um exemplo geral</h3>
+    <p class="lead">
+      Para melhor compreender o funcionamento de cada um dos componentes do Master Node, imaginemos um exemplo simples: um administrador
+      do Cluster deseja criar um novo Pod. Ele então, através, do Kube API Server, faz uma requisição de criação de um novo Pod.
+      Primeiro, a requisição é autenticada e então, validada pelo o API Server; a seguir, ele cria um objeto de Pod, sem atribuí-lo a nenhum 
+      Node, e informa ao Etcd. O Kube Scheduler está constantemente monitorando o API Server e percebe que há um novo objeto de Pod sem 
+      um Node associado; ele então encontra o Node perfeito para receber o ainda não criado Pod e informa ao API Server. Como esperado,
+      o API Server atualiza no Etcd as informações referentes ao Pod, e então passa a informação ao Kubelet do Worker Node escolhido.
+      Finalmente, o agente Kubelet criará o Pod em seu Node, e solicitará que o Container Runtime rode a imagem da aplicação. Feito isso,
+      o Kubelet informa que o status do Pod ao API Server, que por sua vez atualiza as informações no Etcd. 
+    </p>
+
+    <img src="./arch-gen.webp" class="mx-auto d-block border my-3 "widht="700" height="420"> 
+    <h6 class="small text-center"> 
+      Visão geral da arquitetura do Kubernetes.
+      <br>
+      Imagem retirada de <bold>Way to Easy Learn</bold>. 
+      Disponível em https://www.waytoeasylearn.com/learn/kubernetes-architecture/.  
+    </h6>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
   </body>
 </html>
